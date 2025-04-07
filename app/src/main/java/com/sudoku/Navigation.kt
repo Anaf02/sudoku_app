@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sudoku.screens.HomeScreenContent
 import com.sudoku.screens.GameScreenContent
+import com.sudoku.viewModels.GameViewModel
 import kotlinx.serialization.Serializable
 
 @Composable

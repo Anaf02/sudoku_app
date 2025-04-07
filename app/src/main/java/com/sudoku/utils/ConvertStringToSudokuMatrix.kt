@@ -1,4 +1,4 @@
-package com.sudoku
+package com.sudoku.utils
 
 fun convertStringToSudokuMatrix(numbersOnBoard: String?): Array<IntArray> {
     if (numbersOnBoard?.length != 81) {

@@ -1,10 +1,14 @@
-package com.sudoku
+package com.sudoku.viewModels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sudoku.utils.InvalidSudokuBoardException
+import com.sudoku.utils.convertStringToSudokuMatrix
+import com.sudoku.network.fetchRandomSudoku
+import com.sudoku.network.fetchSudokuSolution
 import kotlinx.coroutines.launch
 
 class GameViewModel : ViewModel() {
