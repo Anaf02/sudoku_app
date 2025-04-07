@@ -17,7 +17,6 @@ fun Navigation() {
         navController = navController,
         startDestination = HomeScreen
     ) {
-
         composable<HomeScreen> {
             HomeScreenContent(navController, onNavigateToGameScreen = {
                 navController.navigate(GameScreen)

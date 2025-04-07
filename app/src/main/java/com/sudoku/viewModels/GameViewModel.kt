@@ -49,11 +49,6 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    fun restartGame() {
-        loadSudoku()
-        solutionBoard = null
-    }
-
     private fun loadSudokuSolution() {
         viewModelScope.launch {
             try {
@@ -63,6 +58,11 @@ class GameViewModel : ViewModel() {
                 errorMessage = "Failed to load puzzle: ${e.localizedMessage}"
             }
         }
+    }
+
+    fun restartGame() {
+        loadSudoku()
+        solutionBoard = null
     }
 
     fun solveSudoku() {

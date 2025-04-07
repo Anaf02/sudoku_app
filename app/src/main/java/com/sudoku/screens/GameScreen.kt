@@ -1,7 +1,13 @@
 package com.sudoku.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -78,13 +84,22 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                     .padding(end = 16.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                Button(onClick = { viewModel.solveSudoku() }, modifier = Modifier.padding(8.dp)) {
+                Button(
+                    onClick = { viewModel.solveSudoku() },
+                    modifier = Modifier.padding(8.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                ) {
+                    Icon(Icons.Default.CheckCircle, contentDescription = "Solve Sudoku")
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text("Solve Sudoku")
                 }
                 Button(
                     onClick = { showRestartDialog = true },
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ) {
+                    Icon(Icons.Default.Refresh, contentDescription = "Restart Game")
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text("Restart Game")
                 }
                 if (showRestartDialog) {
@@ -98,7 +113,6 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                         onDismiss = { showRestartDialog = false }
                     )
                 }
-
             }
         }
     }
