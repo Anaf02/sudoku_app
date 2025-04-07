@@ -3,7 +3,6 @@ package com.sudoku.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,7 +32,7 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
     Scaffold(
         topBar = {
             SimpleTopBar(
-                title = "Sudoku",
+                title = "Sudoku: ${viewModel.inputBoardIndex}",
                 navController = navController,
                 showBackArrow = true
             )
@@ -70,7 +69,7 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                     }
 
                     matrixResult.fold(
-                        onSuccess = { matrix -> SudokuBoard(matrix!!, viewModel.inputBoardIndex) },
+                        onSuccess = { matrix -> SudokuBoard(matrix!!, onCellClick = {}) },
                         onFailure = { error -> Text(text = error.message ?: "Invalid board input") }
                     )
                 }
