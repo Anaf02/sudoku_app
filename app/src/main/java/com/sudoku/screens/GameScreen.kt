@@ -59,18 +59,28 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                 }
 
                 else -> {
-                    val matrixResult = if (viewModel.solutionBoard != null) {
-                        try {
-                            Result.success(convertStringToSudokuMatrix(viewModel.solutionBoard!!))
-                        } catch (e: InvalidSudokuBoardException) {
-                            Result.failure(e)
+                    val matrixResult = when {
+                        viewModel.solutionBoard != null -> {
+                            try {
+                                Result.success(convertStringToSudokuMatrix(viewModel.solutionBoard!!))
+                            } catch (e: InvalidSudokuBoardException) {
+                                Result.failure(e)
+                            }
                         }
-                    } else {
-                        viewModel.inputMatrixResult
+
+                        else -> {
+                            Result.success(viewModel.currentBoard.takeIf { it.isNotEmpty() }
+                                ?: convertStringToSudokuMatrix(viewModel.inputBoard ?: ""))
+                        }
                     }
 
                     matrixResult.fold(
-                        onSuccess = { matrix -> SudokuBoard(matrix!!, onCellClick = {}) },
+                        onSuccess = { matrix ->
+                            SudokuBoard(
+                                matrix,
+                                editableCells = viewModel.editableCells,
+                                onCellClick = { row, col -> onNumberCellClick(row, col) })
+                        },
                         onFailure = { error -> Text(text = error.message ?: "Invalid board input") }
                     )
                 }
@@ -79,7 +89,7 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
 
             NumberInputPad(
-                onNumberClick = { /* TODO: Handle number click */ }
+                onNumberClick = { newValue -> onNumberPadClick(newValue) }
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -104,16 +114,16 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                     modifier = Modifier.padding(8.dp),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ) {
-                    Icon(Icons.Default.Refresh, contentDescription = "Restart Game")
+                    Icon(Icons.Default.Refresh, contentDescription = "New Game")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Restart Game")
+                    Text("New Game")
                 }
                 if (showRestartDialog) {
                     CustomAlertDialog(
-                        title = "Restart Game",
-                        message = "Are you sure you want to restart the game?",
+                        title = "New Game",
+                        message = "Are you sure you want to start a new the game?",
                         onConfirm = {
-                            viewModel.restartGame()
+                            viewModel.newGame()
                             showRestartDialog = false
                         },
                         onDismiss = { showRestartDialog = false }
@@ -123,3 +133,11 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
         }
     }
 }
+
+fun onNumberPadClick(newValue: Int) {
+
+}
+
+fun onNumberCellClick(row: Int, col: Int) {
+}
+

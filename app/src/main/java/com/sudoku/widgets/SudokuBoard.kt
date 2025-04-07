@@ -13,7 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SudokuBoard(matrix: Array<IntArray>, onCellClick: () -> Unit) {
+fun SudokuBoard(
+    matrix: Array<IntArray>,
+    editableCells: Array<BooleanArray>,
+    onCellClick: (Int, Int) -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(8.dp)
@@ -22,12 +26,18 @@ fun SudokuBoard(matrix: Array<IntArray>, onCellClick: () -> Unit) {
         for (row in 0 until 3) {
             Row {
                 for (col in 0 until 3) {
-                    val cellValue = Array(3) { i ->
+                    val subgridValues = Array(3) { i ->
                         IntArray(3) { j ->
                             matrix[row * 3 + i][col * 3 + j]
                         }
                     }
-                    MiniGrid3x3(cellValue, onCellClick)
+
+                    val editableCellBlock = Array(3) { i ->
+                        BooleanArray(3) { j ->
+                            editableCells[row * 3 + i][col * 3 + j]
+                        }
+                    }
+                    MiniGrid3x3(subgridValues, editableCellBlock, onCellClick)
                 }
             }
         }
@@ -35,7 +45,11 @@ fun SudokuBoard(matrix: Array<IntArray>, onCellClick: () -> Unit) {
 }
 
 @Composable
-fun MiniGrid3x3(cellValue: Array<IntArray>, onCellClick: () -> Unit) {
+private fun MiniGrid3x3(
+    cellValue: Array<IntArray>,
+    editableCells: Array<BooleanArray>,
+    onCellClick: (Int, Int) -> Unit
+) {
     Column(
         modifier = Modifier
             .border(1.7.dp, Color.Black)
@@ -44,7 +58,7 @@ fun MiniGrid3x3(cellValue: Array<IntArray>, onCellClick: () -> Unit) {
             Row {
                 for (col in 0 until 3) {
                     val value = cellValue[row][col]
-                    val isCellClickable = value == 0;
+                    val isCellClickable = editableCells[row][col]
 
                     Box(
                         contentAlignment = Alignment.Center,
@@ -57,7 +71,7 @@ fun MiniGrid3x3(cellValue: Array<IntArray>, onCellClick: () -> Unit) {
                             )
                             .clickable(
                                 enabled = isCellClickable,
-                                onClick = onCellClick
+                                onClick = { onCellClick(row, col) }
                             )
                     ) {
                         Text(

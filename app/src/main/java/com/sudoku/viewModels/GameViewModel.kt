@@ -9,6 +9,7 @@ import com.sudoku.utils.InvalidSudokuBoardException
 import com.sudoku.utils.convertStringToSudokuMatrix
 import com.sudoku.network.fetchRandomSudoku
 import com.sudoku.network.fetchSudokuSolution
+import com.sudoku.utils.getInitialEditableCells
 import kotlinx.coroutines.launch
 
 class GameViewModel : ViewModel() {
@@ -22,6 +23,12 @@ class GameViewModel : ViewModel() {
         private set
 
     var errorMessage by mutableStateOf<String?>(null)
+        private set
+
+    var editableCells by mutableStateOf<Array<BooleanArray>>(emptyArray())
+        private set
+
+    var currentBoard by mutableStateOf<Array<IntArray>>(emptyArray())
         private set
 
     val inputMatrixResult: Result<Array<IntArray>?>
@@ -43,6 +50,7 @@ class GameViewModel : ViewModel() {
                 val result = fetchRandomSudoku()
                 inputBoard = result.puzzle
                 inputBoardIndex = result.index
+                editableCells = getInitialEditableCells(convertStringToSudokuMatrix(result.puzzle))
             } catch (e: Exception) {
                 errorMessage = "Failed to load puzzle: ${e.localizedMessage}"
             }
@@ -60,12 +68,20 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    fun restartGame() {
+    fun newGame() {
         loadSudoku()
         solutionBoard = null
+        errorMessage = null
     }
 
     fun solveSudoku() {
         loadSudokuSolution()
+    }
+
+    fun updateCellValue(row: Int, col: Int, newValue: Int) {
+        if (editableCells[row][col]) {
+            currentBoard = convertStringToSudokuMatrix(inputBoard ?: "")
+            currentBoard[row][col] = newValue
+        }
     }
 }
