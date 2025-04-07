@@ -12,12 +12,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SudokuBoard(matrix: Array<IntArray>) {
+fun SudokuBoard(matrix: Array<IntArray>, boardIndex: Int?) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .background(Color.White)
     ) {
+        Text("Sudoku Puzzle: $boardIndex")
         for (row in 0 until 3) {
             Row {
                 for (col in 0 until 3) {
