@@ -22,6 +22,7 @@ import com.sudoku.viewModels.GameViewModel
 import com.sudoku.utils.InvalidSudokuBoardException
 import com.sudoku.utils.convertStringToSudokuMatrix
 import com.sudoku.widgets.CustomAlertDialog
+import com.sudoku.widgets.NumberInputPad
 import com.sudoku.widgets.SimpleTopBar
 import com.sudoku.widgets.SudokuBoard
 
@@ -75,7 +76,13 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(42.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            NumberInputPad(
+                onNumberClick = { /* TODO: Handle number click */ }
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
 
             Row(
                 modifier = Modifier
