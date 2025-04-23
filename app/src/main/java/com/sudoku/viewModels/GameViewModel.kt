@@ -2,6 +2,7 @@ package com.sudoku.viewModels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,6 +31,9 @@ class GameViewModel : ViewModel() {
 
     var currentBoard by mutableStateOf<Array<IntArray>>(emptyArray())
         private set
+
+    var selectedCell by  mutableStateOf<Pair<Int, Int>?>(null)
+
 
     val inputMatrixResult: Result<Array<IntArray>?>
         get() = try {
@@ -73,10 +77,12 @@ class GameViewModel : ViewModel() {
         loadSudoku()
         solutionBoard = null
         errorMessage = null
+        selectedCell = null
     }
 
     fun solveSudoku() {
         loadSudokuSolution()
+        selectedCell = null
     }
 
     fun updateCell(row: Int, col: Int, newValue: Int) {
@@ -85,5 +91,15 @@ class GameViewModel : ViewModel() {
             updatedBoard[row][col] = newValue
             currentBoard = updatedBoard
         }
+        selectedCell = null
+    }
+
+    fun clearCell(row: Int, col: Int, newValue: Int){
+        if (editableCells[row][col]) {
+            val updatedBoard = currentBoard.map { it.copyOf() }.toTypedArray()
+            updatedBoard[row][col] = 0
+            currentBoard = updatedBoard
+        }
+        selectedCell = null
     }
 }

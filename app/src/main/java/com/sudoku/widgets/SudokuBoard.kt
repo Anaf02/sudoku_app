@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -87,8 +88,8 @@ private fun MiniGrid3x3(
                             .border(0.5.dp, Color.Gray)
                             .background(
                                 when {
-                                    isSelected -> Color.Cyan
-                                    !isCellClickable -> Color.LightGray
+                                    isSelected -> MaterialTheme.colorScheme.inversePrimary
+                                    !isCellClickable -> MaterialTheme.colorScheme.surfaceContainerHighest
                                     else -> Color.Transparent
                                 }
                             )
