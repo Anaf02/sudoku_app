@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 fun SudokuBoard(
     matrix: Array<IntArray>,
     editableCells: Array<BooleanArray>,
+    selectedCell: Pair<Int, Int>?,
     onCellClick: (Int, Int) -> Unit
 ) {
     Column(
@@ -26,18 +27,30 @@ fun SudokuBoard(
         for (row in 0 until 3) {
             Row {
                 for (col in 0 until 3) {
+                    val startRow = row * 3
+                    val startCol = col * 3
+
                     val subgridValues = Array(3) { i ->
                         IntArray(3) { j ->
-                            matrix[row * 3 + i][col * 3 + j]
+                            matrix[startRow + i][startCol + j]
                         }
                     }
 
                     val editableCellBlock = Array(3) { i ->
                         BooleanArray(3) { j ->
-                            editableCells[row * 3 + i][col * 3 + j]
+                            editableCells[startRow + i][startCol + j]
                         }
                     }
-                    MiniGrid3x3(subgridValues, editableCellBlock, onCellClick)
+                    MiniGrid3x3(
+                        cellValue = subgridValues,
+                        editableCells = editableCellBlock,
+                        startRow,
+                        startCol,
+                        selectedCell,
+                        onCellClick = { localRow, localCol ->
+                            onCellClick(startRow + localRow, startCol + localCol)
+                        }
+                    )
                 }
             }
         }
@@ -48,6 +61,9 @@ fun SudokuBoard(
 private fun MiniGrid3x3(
     cellValue: Array<IntArray>,
     editableCells: Array<BooleanArray>,
+    startRow: Int,
+    startCol: Int,
+    selectedCell: Pair<Int, Int>?,
     onCellClick: (Int, Int) -> Unit
 ) {
     Column(
@@ -59,15 +75,22 @@ private fun MiniGrid3x3(
                 for (col in 0 until 3) {
                     val value = cellValue[row][col]
                     val isCellClickable = editableCells[row][col]
+                    val absoluteRow = startRow + row
+                    val absoluteCol = startCol + col
+                    val isSelected =
+                        selectedCell?.first == absoluteRow && selectedCell.second == absoluteCol
 
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .size(36.dp)
                             .border(0.5.dp, Color.Gray)
-                            .then(
-                                if (!isCellClickable) Modifier.background(Color.LightGray)
-                                else Modifier
+                            .background(
+                                when {
+                                    isSelected -> Color.Cyan
+                                    !isCellClickable -> Color.LightGray
+                                    else -> Color.Transparent
+                                }
                             )
                             .clickable(
                                 enabled = isCellClickable,

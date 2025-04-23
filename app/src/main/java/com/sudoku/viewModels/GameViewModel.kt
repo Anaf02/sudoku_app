@@ -51,6 +51,7 @@ class GameViewModel : ViewModel() {
                 inputBoard = result.puzzle
                 inputBoardIndex = result.index
                 editableCells = getInitialEditableCells(convertStringToSudokuMatrix(result.puzzle))
+                currentBoard = convertStringToSudokuMatrix(result.puzzle)
             } catch (e: Exception) {
                 errorMessage = "Failed to load puzzle: ${e.localizedMessage}"
             }
@@ -78,10 +79,11 @@ class GameViewModel : ViewModel() {
         loadSudokuSolution()
     }
 
-    fun updateCellValue(row: Int, col: Int, newValue: Int) {
+    fun updateCell(row: Int, col: Int, newValue: Int) {
         if (editableCells[row][col]) {
-            currentBoard = convertStringToSudokuMatrix(inputBoard ?: "")
-            currentBoard[row][col] = newValue
+            val updatedBoard = currentBoard.map { it.copyOf() }.toTypedArray()
+            updatedBoard[row][col] = newValue
+            currentBoard = updatedBoard
         }
     }
 }

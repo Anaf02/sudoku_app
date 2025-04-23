@@ -29,6 +29,13 @@ import com.sudoku.widgets.SudokuBoard
 @Composable
 fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
     var showRestartDialog by remember { mutableStateOf(false) }
+    var selectedCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+
+    val onNumberPadClick: (Int) -> Unit = { newValue ->
+        selectedCell?.let { (row, col) ->
+            viewModel.updateCell(row, col, newValue)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -79,7 +86,8 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                             SudokuBoard(
                                 matrix,
                                 editableCells = viewModel.editableCells,
-                                onCellClick = { row, col -> onNumberCellClick(row, col) })
+                                selectedCell = selectedCell,
+                                onCellClick = { row, col -> selectedCell = row to col })
                         },
                         onFailure = { error -> Text(text = error.message ?: "Invalid board input") }
                     )
@@ -133,11 +141,3 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
         }
     }
 }
-
-fun onNumberPadClick(newValue: Int) {
-
-}
-
-fun onNumberCellClick(row: Int, col: Int) {
-}
-
