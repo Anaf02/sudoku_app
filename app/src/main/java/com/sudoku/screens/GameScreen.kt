@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.sudoku.viewModels.GameViewModel
 import com.sudoku.utils.SudokuContent
+import com.sudoku.widgets.CellClearIcon
 import com.sudoku.widgets.CustomAlertDialog
 import com.sudoku.widgets.GameButtonsRow
 import com.sudoku.widgets.NumberInputPad
@@ -51,6 +52,12 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
             NumberInputPad(onNumberClick = { value ->
                 viewModel.selectedCell?.let { (row, col) ->
                     viewModel.updateCell(row, col, value)
+                }
+            })
+
+            CellClearIcon(onIconClick = {
+                viewModel.selectedCell?.let { (row, col) ->
+                    viewModel.clearCell(row, col)
                 }
             })
 

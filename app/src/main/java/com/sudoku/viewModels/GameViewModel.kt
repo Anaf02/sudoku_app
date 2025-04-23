@@ -94,7 +94,7 @@ class GameViewModel : ViewModel() {
         selectedCell = null
     }
 
-    fun clearCell(row: Int, col: Int, newValue: Int){
+    fun clearCell(row: Int, col: Int){
         if (editableCells[row][col]) {
             val updatedBoard = currentBoard.map { it.copyOf() }.toTypedArray()
             updatedBoard[row][col] = 0

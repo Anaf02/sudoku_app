@@ -33,9 +33,9 @@ fun GameButtonsRow(
             modifier = Modifier.padding(8.dp),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
         ) {
-            Icon(Icons.Default.CheckCircle, contentDescription = "Solve Sudoku")
+            Icon(Icons.Default.CheckCircle, contentDescription = "Show Solution")
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Solve Sudoku")
+            Text("Show Solution")
         }
         Button(
             onClick = onNewGameClick,
