@@ -10,18 +10,20 @@ fun CustomAlertDialog(
     title: String,
     message: String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    confirmButtonText: String,
+    dismissButtonText: String
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             Button(onClick = onConfirm) {
-                Text("Yes")
+                Text(confirmButtonText)
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text("No")
+                Text(dismissButtonText)
             }
         },
         title = { Text(title) },

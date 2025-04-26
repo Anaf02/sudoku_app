@@ -2,7 +2,6 @@ package com.sudoku.viewModels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,36 +9,41 @@ import com.sudoku.utils.InvalidSudokuBoardException
 import com.sudoku.utils.convertStringToSudokuMatrix
 import com.sudoku.network.fetchRandomSudoku
 import com.sudoku.network.fetchSudokuSolution
+import com.sudoku.utils.CellCheckResult
+import com.sudoku.utils.convertSudokuMatrixToString
 import com.sudoku.utils.getInitialEditableCells
+import com.sudoku.utils.getInitialFilledCellsNumber
+import com.sudoku.utils.getNumberOfCorrectCells
 import kotlinx.coroutines.launch
 
 class GameViewModel : ViewModel() {
-    var inputBoard by mutableStateOf<String?>(null)
-        private set
-
     var inputBoardIndex by mutableStateOf<Int?>(null)
         private set
 
-    var solutionBoard by mutableStateOf<String?>(null)
-        private set
-
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
+    var selectedCell by mutableStateOf<Pair<Int, Int>?>(null)
 
     var editableCells by mutableStateOf<Array<BooleanArray>>(emptyArray())
         private set
 
-    var currentBoard by mutableStateOf<Array<IntArray>>(emptyArray())
-        private set
+    private var inputBoard by mutableStateOf<String?>(null)
 
-    var selectedCell by  mutableStateOf<Pair<Int, Int>?>(null)
+    private var solutionBoard by mutableStateOf<String?>(null)
+
+    private var errorMessage by mutableStateOf<String?>(null)
+
+    private var currentBoard by mutableStateOf<Array<IntArray>>(emptyArray())
+
+    private var solutionFetched by mutableStateOf<String?>(null)
 
 
-    val inputMatrixResult: Result<Array<IntArray>?>
+    val matrixResult: Result<Array<IntArray>>
         get() = try {
-            inputBoard?.let {
-                Result.success(convertStringToSudokuMatrix(it))
-            } ?: Result.failure(InvalidSudokuBoardException("Empty board"))
+            when {
+                solutionBoard != null -> Result.success(convertStringToSudokuMatrix(solutionBoard!!))
+                currentBoard.isNotEmpty() -> Result.success(currentBoard)
+                inputBoard != null -> Result.success(convertStringToSudokuMatrix(inputBoard!!))
+                else -> Result.failure(InvalidSudokuBoardException("No available board"))
+            }
         } catch (e: InvalidSudokuBoardException) {
             Result.failure(e)
         }
@@ -56,19 +60,21 @@ class GameViewModel : ViewModel() {
                 inputBoardIndex = result.index
                 editableCells = getInitialEditableCells(convertStringToSudokuMatrix(result.puzzle))
                 currentBoard = convertStringToSudokuMatrix(result.puzzle)
+
+                loadSudokuSolution(inputBoardIndex!!)
             } catch (e: Exception) {
-                errorMessage = "Failed to load puzzle: ${e.localizedMessage}"
+                setError(e, "Failed to load input puzzle")
             }
         }
     }
 
-    private fun loadSudokuSolution() {
+    private fun loadSudokuSolution(index: Int) {
         viewModelScope.launch {
             try {
-                val result = fetchSudokuSolution(inputBoardIndex)
-                solutionBoard = result.solution
+                val result = fetchSudokuSolution(index)
+                solutionFetched = result.solution
             } catch (e: Exception) {
-                errorMessage = "Failed to load puzzle: ${e.localizedMessage}"
+                setError(e, "Failed to load solution puzzle")
             }
         }
     }
@@ -78,10 +84,12 @@ class GameViewModel : ViewModel() {
         solutionBoard = null
         errorMessage = null
         selectedCell = null
+        solutionFetched = null
     }
 
     fun solveSudoku() {
-        loadSudokuSolution()
+        if (solutionFetched != null)
+            solutionBoard = solutionFetched
         selectedCell = null
     }
 
@@ -94,12 +102,30 @@ class GameViewModel : ViewModel() {
         selectedCell = null
     }
 
-    fun clearCell(row: Int, col: Int){
+    fun clearCell(row: Int, col: Int) {
         if (editableCells[row][col]) {
             val updatedBoard = currentBoard.map { it.copyOf() }.toTypedArray()
             updatedBoard[row][col] = 0
             currentBoard = updatedBoard
         }
         selectedCell = null
+    }
+
+    fun clearAllCells() {
+        currentBoard = convertStringToSudokuMatrix(inputBoard)
+        solutionBoard = null
+        selectedCell = null
+    }
+
+    fun checkSolution(): CellCheckResult {
+        return getNumberOfCorrectCells(
+            convertSudokuMatrixToString(currentBoard),
+            solutionFetched!!,
+            getInitialFilledCellsNumber(inputBoard!!)
+        )
+    }
+
+    private fun setError(e: Exception, message: String) {
+        errorMessage = "$message: ${e.localizedMessage}"
     }
 }

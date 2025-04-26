@@ -3,21 +3,22 @@ package com.sudoku.widgets
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,23 +27,26 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GameButtonsRow(
-    onSolveClick: () -> Unit,
-    onNewGameClick: () -> Unit
+    onCheckSolutionClick: () -> Unit,
+    onShowSolutionClick: () -> Unit,
+    onNewGameClick: () -> Unit,
+    onClearAllClick: () -> Unit
 ) {
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
         maxItemsInEachRow = 3
     ) {
         GameButton(
-            onClick = {},
+            onClick = onCheckSolutionClick,
             icon = Icons.Default.Build,
             contentDescription = "Check Solution",
             text = "Check Solution"
         )
         GameButton(
-            onClick = onSolveClick,
+            onClick = onShowSolutionClick,
             icon = Icons.Default.CheckCircle,
             contentDescription = "Show Solution",
             text = "Show Solution"
@@ -52,6 +56,12 @@ fun GameButtonsRow(
             icon = Icons.Default.Refresh,
             contentDescription = "New Game",
             text = "New Game"
+        )
+        GameButton(
+            onClick = onClearAllClick,
+            icon = Icons.Default.Clear,
+            contentDescription = "Clear All",
+            text = "Clear All"
         )
     }
 }
@@ -65,7 +75,10 @@ fun GameButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .width(140.dp)
+            .height(55.dp),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
     ) {
         Icon(icon, contentDescription = contentDescription)
@@ -78,7 +91,9 @@ fun GameButton(
 @Composable
 fun GameButtonsRowPreview() {
     GameButtonsRow(
-        onSolveClick = {},
-        onNewGameClick = {}
+        onCheckSolutionClick = {},
+        onShowSolutionClick = {},
+        onNewGameClick = {},
+        onClearAllClick = {}
     )
 }

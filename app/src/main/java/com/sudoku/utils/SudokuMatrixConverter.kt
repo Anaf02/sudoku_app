@@ -15,4 +15,19 @@ fun convertStringToSudokuMatrix(numbersOnBoard: String?): Array<IntArray> {
     return matrix
 }
 
+fun convertSudokuMatrixToString(sudokuBoard: Array<IntArray>): String {
+    if (sudokuBoard.size != 9 || sudokuBoard.any { it.size != 9 }) {
+        throw InvalidSudokuBoardException("Sudoku board must be 9x9.")
+    }
+
+    val builder = StringBuilder(81)
+    for (row in sudokuBoard) {
+        for (cell in row) {
+            builder.append(cell.coerceIn(0, 9))
+        }
+    }
+
+    return builder.toString()
+}
+
 class InvalidSudokuBoardException(message: String) : Exception(message)

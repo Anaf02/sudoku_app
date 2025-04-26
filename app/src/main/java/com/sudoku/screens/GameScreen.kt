@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.sudoku.utils.CellCheckResult
 import com.sudoku.viewModels.GameViewModel
 import com.sudoku.utils.SudokuContent
 import com.sudoku.widgets.CellClearIcon
@@ -22,6 +23,8 @@ import com.sudoku.widgets.SimpleTopBar
 @Composable
 fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
     var showRestartDialog by remember { mutableStateOf(false) }
+    var checkSolutionDialog by remember { mutableStateOf(false) }
+    var checkedCells by remember { mutableStateOf<CellCheckResult?>(null) }
 
     Scaffold(
         topBar = {
@@ -64,8 +67,13 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
             Spacer(modifier = Modifier.height(32.dp))
 
             GameButtonsRow(
-                onSolveClick = { viewModel.solveSudoku() },
-                onNewGameClick = { showRestartDialog = true }
+                onCheckSolutionClick = {
+                    checkedCells = viewModel.checkSolution()
+                    checkSolutionDialog = true
+                },
+                onShowSolutionClick = { viewModel.solveSudoku() },
+                onNewGameClick = { showRestartDialog = true },
+                onClearAllClick = { viewModel.clearAllCells() }
             )
 
             if (showRestartDialog) {
@@ -76,7 +84,23 @@ fun GameScreenContent(navController: NavController, viewModel: GameViewModel) {
                         viewModel.newGame()
                         showRestartDialog = false
                     },
-                    onDismiss = { showRestartDialog = false }
+                    onDismiss = { showRestartDialog = false },
+                    confirmButtonText = "Yes",
+                    dismissButtonText = "No"
+                )
+            }
+            if (checkSolutionDialog) {
+                CustomAlertDialog(
+                    title = "Correct Cells",
+                    message = "Correct cells: ${checkedCells!!.correctCells}\n" +
+                            "Incorrect cells: ${checkedCells!!.incorrectCells}",
+                    onConfirm = { checkSolutionDialog = false },
+                    onDismiss = {
+                        checkSolutionDialog = false
+                        viewModel.solveSudoku()
+                    },
+                    confirmButtonText = "Continue solving",
+                    dismissButtonText = "Give up"
                 )
             }
         }
