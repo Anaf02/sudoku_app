@@ -19,7 +19,7 @@ val httpClient = HttpClient(OkHttp) {
 suspend fun fetchRandomSudoku(): SudokuPuzzleResponse {
     val randomIndex = (0..900799).random()
     val response: SudokuPuzzleResponse = httpClient
-        .get("http://10.0.2.2:5134/sudoku/$randomIndex")
+        .get("http://10.0.2.2:5134/sudoku/unsolved/$randomIndex")
         .body()
 
     return response
@@ -27,7 +27,7 @@ suspend fun fetchRandomSudoku(): SudokuPuzzleResponse {
 
 suspend fun fetchSudokuSolution(index: Int?): SudokuSolutionResponse {
     val response: SudokuSolutionResponse = httpClient
-        .get("http://10.0.2.2:5134/sudoku_solved/$index")
+        .get("http://10.0.2.2:5134/sudoku/solved/$index")
         .body()
 
     return response
