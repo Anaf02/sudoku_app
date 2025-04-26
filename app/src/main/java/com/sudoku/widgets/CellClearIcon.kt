@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 fun CellClearIcon(onIconClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .size(48.dp)
+            .size(50.dp)
             .clickable {
                 onIconClick()
             },

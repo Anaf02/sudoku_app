@@ -25,6 +25,8 @@ class GameViewModel : ViewModel() {
     var editableCells by mutableStateOf<Array<BooleanArray>>(emptyArray())
         private set
 
+    var solutionShowed by mutableStateOf<Boolean>(false)
+
     private var inputBoard by mutableStateOf<String?>(null)
 
     private var solutionBoard by mutableStateOf<String?>(null)
@@ -33,7 +35,7 @@ class GameViewModel : ViewModel() {
 
     private var currentBoard by mutableStateOf<Array<IntArray>>(emptyArray())
 
-    private var solutionFetched by mutableStateOf<String?>(null)
+    private var solutionBoardPrefetched by mutableStateOf<String?>(null)
 
 
     val matrixResult: Result<Array<IntArray>>
@@ -72,7 +74,7 @@ class GameViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val result = fetchSudokuSolution(index)
-                solutionFetched = result.solution
+                solutionBoardPrefetched = result.solution
             } catch (e: Exception) {
                 setError(e, "Failed to load solution puzzle")
             }
@@ -84,16 +86,23 @@ class GameViewModel : ViewModel() {
         solutionBoard = null
         errorMessage = null
         selectedCell = null
-        solutionFetched = null
+        solutionBoardPrefetched = null
+        solutionShowed = false
     }
 
     fun solveSudoku() {
-        if (solutionFetched != null)
-            solutionBoard = solutionFetched
+        if (solutionBoardPrefetched != null)
+            solutionBoard = solutionBoardPrefetched
         selectedCell = null
+        solutionShowed = true
     }
 
     fun updateCell(row: Int, col: Int, newValue: Int) {
+        if (solutionBoard != null) {
+            selectedCell = null
+            return
+        }
+
         if (editableCells[row][col]) {
             val updatedBoard = currentBoard.map { it.copyOf() }.toTypedArray()
             updatedBoard[row][col] = newValue
@@ -112,15 +121,16 @@ class GameViewModel : ViewModel() {
     }
 
     fun clearAllCells() {
-        currentBoard = convertStringToSudokuMatrix(inputBoard)
-        solutionBoard = null
-        selectedCell = null
+        if (solutionBoard != null) {
+            currentBoard = convertStringToSudokuMatrix(inputBoard)
+            selectedCell = null
+        }
     }
 
     fun checkSolution(): CellCheckResult {
         return getNumberOfCorrectCells(
             convertSudokuMatrixToString(currentBoard),
-            solutionFetched!!,
+            solutionBoardPrefetched!!,
             getInitialFilledCellsNumber(inputBoard!!)
         )
     }

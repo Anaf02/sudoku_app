@@ -20,7 +20,8 @@ fun NumberInputPad(
     LazyVerticalGrid(
         columns = GridCells.Fixed(9),
         modifier = Modifier
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = 4.dp)
+            .heightIn(max = 100.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
