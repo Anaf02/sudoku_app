@@ -121,7 +121,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun clearAllCells() {
-        if (solutionBoard != null) {
+        if (solutionBoard == null) {
             currentBoard = convertStringToSudokuMatrix(inputBoard)
             selectedCell = null
         }
